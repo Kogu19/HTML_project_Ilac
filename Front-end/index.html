@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vue Tees</title>
+    <link rel="stylesheet" href="Css/styles.css">
+</head>
+<body>
+    <div id="app">
+        <header>
+            <h1>Frost</h1>
+            <button class="cart-btn" @click="toggleCart">
+                🛒 Cart <span v-if="cartCount > 0">({{ cartCount }})</span>
+            </button>
+        </header>
+
+        <main class="product-section">
+           <div class="product-image">
+                <img :src="currentImage" :alt="currentProduct.title">
+            </div>
+            
+            <div class="product-details">
+                <h2>{{ currentProduct.title }}</h2>
+                <p class="description">{{ currentProduct.description }}</p>
+                <p class="price">{{ currentProduct.price }} €</p>
+                
+                <div class="color-selector">
+                    <label>Color:</label>
+                    <div class="colors">
+                        <div 
+                            v-for="color in currentProduct.colors" 
+                            :key="color.name"
+                            class="color-circle"
+                            :class="{ active: selectedColor === color.name }"
+                            :style="{ backgroundColor: color.hex }"
+                            @click="selectedColor = color.name"
+                        ></div>
+                    </div>
+                </div>
+                
+                <div class="size-selector">
+                    <label>Size:</label>
+                    <div class="sizes">
+                        <button 
+                            v-for="size in sizes" 
+                            :key="size"
+                            :class="{ active: selectedSize === size }"
+                            @click="selectedSize = size"
+                        >{{ size }}</button>
+                    </div>
+                </div>
+                
+                <button class="add-to-cart" @click="addToCart">Add to Cart </button>
+                
+                <div class="navigation">
+                    <button @click="previousProduct">← Previous</button>
+                    <button @click="nextProduct">Next →</button>
+                </div>
+            </div>
+        </main>
+
+        <div v-if="showCart" class="cart-overlay" @click="closeCart">
+            <div class="cart-modal" @click.stop>
+                <div class="cart-header">
+                    <h2>Cart</h2>
+                    <button class="close-btn" @click="closeCart">✕</button>
+                </div>
+                
+                <div class="cart-content">
+                    <div v-if="cart.length === 0" class="empty-cart">
+                        Your cart is empty
+                    </div>
+                    
+                    <div v-else>
+                        <div v-for="(item, index) in cart" :key="index" class="cart-item">
+                            <div class="item-info">
+                                <h3>{{ item.title }}</h3>
+                                <div class="item-details">
+                                    <span>Size: {{ item.size }}</span>
+                                    <span class="color-indicator">
+                                        Color: <span class="color-dot" :style="{ backgroundColor: item.colorHex }"></span>
+                                    </span>
+                                </div>
+                                <p class="item-price">{{ item.price }} € × {{ item.quantity }} = {{ (item.price * item.quantity).toFixed(2) }} €</p>
+                            </div>
+                            
+                            <div class="item-actions">
+                                <button @click="decreaseQuantity(index)">−</button>
+                                <span>{{ item.quantity }}</span>
+                                <button @click="increaseQuantity(index)">+</button>
+                                <button class="delete-btn" @click="removeItem(index)">🗑</button>
+                            </div>
+                        </div>
+                        
+                        <div class="cart-total">
+                            <strong>Total: {{ cartTotal }} €</strong>
+                        </div>
+                        
+                        <div class="cart-actions">
+                            <button class="clear-btn" @click="clearCart">Vider le panier</button>
+                            <button class="checkout-btn" @click="checkout">Empty the cart</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+    <script src="data/data.js"></script>
+    <script src="js/script.js"></script>
+</body>
+</html>
